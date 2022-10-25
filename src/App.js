@@ -2,7 +2,7 @@ import "./App.css"
 import { useState, react, useRef, useEffect } from "react"
 
 const getCloud = () =>
-  `Studying is the main source of knowledge. Books are indeed never failing friends of man. For a mature mind, reading is the greatest source of pleasure and solace to distressed minds. The study of good books ennobles us and broadens our outlook. Therefore, the habit of reading should be cultivated. A student should never confine himself to his schoolbooks only. He should not miss the pleasure locked in the classics, poetry, drama, history, philosophy etc. We can derive benefit from other’s experiences with the help of books. The various sufferings, endurance and joy described in books enable us to have a closer look at human life. They also inspire us to face the hardships of life courageously. Nowadays there are innumerable books and time is scarce. So we should read only the best and the greatest among them. With the help of books we shall be able to make our thinking mature and our life more meaningful and worthwhile.`.split(
+  `The bikers rode down the long and narrow path to reach the city park. When they reached a good spot to rest, they began to look for signs of spring. The sun was bright, and a lot of bright red and blue blooms proved to all that warm spring days were the very best. Spring rides were planned. They had a burger at the lake and then rode farther up the mountain. As one rider started to get off his bike, he slipped and fell.`.split(
     " "
   )
 // .sort(() => (Math.random() > 0.5 ? 1 : -1))
@@ -26,16 +26,35 @@ const Word = (props) => {
 }
 
 const Timer = (props) => {
+  const [timerToggle, setTimerToggle] = useState(true)
+  const { correctWords, startCounting, setStartCounting } = props
   const [timeElapsed, setTimeElapsed] = useState(0)
+
   useEffect(() => {
-    if (props.startCounting) {
-      setInterval(() => {
+    let id
+    if (startCounting && timerToggle) {
+      id = setInterval(() => {
         setTimeElapsed((oldTime) => oldTime + 1)
       }, 1000)
     }
+
+    return () => {
+      clearInterval(id)
+    }
   }, [props.startCounting])
 
-  return <p>Time: {timeElapsed}</p>
+  const minutes = timeElapsed / 60
+
+  return (
+    <div>
+      <p>
+        <b>Time:</b> {timeElapsed}s
+      </p>
+      <p>
+        <b>Speed:</b> {(correctWords / minutes || 0).toFixed(0)} WPM
+      </p>
+    </div>
+  )
 }
 
 function App() {
@@ -51,6 +70,12 @@ function App() {
     }
 
     if (value.endsWith(" ")) {
+      if (activeWordIndex === cloud.current.length - 1 || 0) {
+        setStartCounting(false)
+        setUserInput("Time!!!")
+        return
+      }
+
       setActiveWordIndex((index) => index + 1)
       setUserInput("")
 
@@ -68,8 +93,11 @@ function App() {
   return (
     <div className="App">
       <h1>WPM Typing Test</h1>
-      <Timer startCounting={startCounting} />
-      <p className="words">
+      <Timer
+        startCounting={startCounting}
+        correctWords={correctWordArray.filter(Boolean).length}
+      />
+      <h3 className="words">
         {cloud.current.map((word, index) => {
           return (
             <Word
@@ -79,13 +107,15 @@ function App() {
             />
           )
         })}
-      </p>
+      </h3>
 
       <input
         type="text"
         value={userInput}
         onChange={(e) => processInput(e.target.value)}
       ></input>
+
+      <button onClick={() => window.location.reload(false)}>Restart</button>
     </div>
   )
 }

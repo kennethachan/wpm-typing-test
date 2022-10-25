@@ -26,6 +26,7 @@ html {
 .active {
   font-weight: bold;
   color: yellow;
+  background-color: black;
 }
 
 /* .words {
