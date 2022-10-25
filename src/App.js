@@ -1,5 +1,5 @@
 import "./App.css"
-import { useState, react, useRef } from "react"
+import { useState, react, useRef, useEffect } from "react"
 
 const getCloud = () =>
   `Studying is the main source of knowledge. Books are indeed never failing friends of man. For a mature mind, reading is the greatest source of pleasure and solace to distressed minds. The study of good books ennobles us and broadens our outlook. Therefore, the habit of reading should be cultivated. A student should never confine himself to his schoolbooks only. He should not miss the pleasure locked in the classics, poetry, drama, history, philosophy etc. We can derive benefit from other’s experiences with the help of books. The various sufferings, endurance and joy described in books enable us to have a closer look at human life. They also inspire us to face the hardships of life courageously. Nowadays there are innumerable books and time is scarce. So we should read only the best and the greatest among them. With the help of books we shall be able to make our thinking mature and our life more meaningful and worthwhile.`.split(
@@ -25,13 +25,31 @@ const Word = (props) => {
   return <span>{text} </span>
 }
 
+const Timer = (props) => {
+  const [timeElapsed, setTimeElapsed] = useState(0)
+  useEffect(() => {
+    if (props.startCounting) {
+      setInterval(() => {
+        setTimeElapsed((oldTime) => oldTime + 1)
+      }, 1000)
+    }
+  }, [props.startCounting])
+
+  return <p>Time: {timeElapsed}</p>
+}
+
 function App() {
   const [userInput, setUserInput] = useState("")
   const [activeWordIndex, setActiveWordIndex] = useState(0)
   const cloud = useRef(getCloud())
   const [correctWordArray, setCorrectWordArray] = useState([])
+  const [startCounting, setStartCounting] = useState(false)
 
   const processInput = (value) => {
+    if (!startCounting) {
+      setStartCounting(true)
+    }
+
     if (value.endsWith(" ")) {
       setActiveWordIndex((index) => index + 1)
       setUserInput("")
@@ -50,8 +68,8 @@ function App() {
   return (
     <div className="App">
       <h1>WPM Typing Test</h1>
-
-      <p>
+      <Timer startCounting={startCounting} />
+      <p className="words">
         {cloud.current.map((word, index) => {
           return (
             <Word

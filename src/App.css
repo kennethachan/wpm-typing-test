@@ -1,19 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+html {
+  background-color: #55589E;
+  color: white;
+}
+
 .App {
+  width: 500px;
   text-align: center;
+  font-family: 'Open Sans', sans-serif;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .correct {
   font-weight: bold;
   color: green;
-  background-color: black;
 }
 
 .incorrect {
   font-weight: bold;
   color: red;
-  background-color: black;
 }
 
 .active {
   font-weight: bold;
+  color: yellow;
 }
+
+/* .words {
+  color: white;
+} */
