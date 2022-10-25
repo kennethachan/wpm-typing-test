@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
 html {
-  background-color: #55589E;
+  background-color: #12376C;
   color: white;
+
 }
 
 .App {
@@ -15,20 +16,42 @@ html {
 
 .correct {
   font-weight: bold;
-  color: green;
+  color: #02A527 ;
 }
 
 .incorrect {
   font-weight: bold;
-  color: red;
+  color: #FF0000;
 }
 
 .active {
   font-weight: bold;
-  color: yellow;
-  background-color: black;
+  color: white;
+  background-color: #D76B9D;
 }
 
-/* .words {
+.stats {
+  display: flex;
+  justify-content: space-between;
+  width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.restart {
+  width: 90px;
+  background-color: #02A527;
   color: white;
-} */
+  border: none;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+.restart:hover {
+  background:white;
+  color: #02A527;
+  border: 1px solid #02A527;
+}

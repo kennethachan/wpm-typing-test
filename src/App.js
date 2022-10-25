@@ -5,7 +5,6 @@ const getCloud = () =>
   `The bikers rode down the long and narrow path to reach the city park. When they reached a good spot to rest, they began to look for signs of spring. The sun was bright, and a lot of bright red and blue blooms proved to all that warm spring days were the very best. Spring rides were planned. They had a burger at the lake and then rode farther up the mountain. As one rider started to get off his bike, he slipped and fell.`.split(
     " "
   )
-// .sort(() => (Math.random() > 0.5 ? 1 : -1))
 
 const Word = (props) => {
   const { text, active, correct, incorrect } = props
@@ -26,13 +25,12 @@ const Word = (props) => {
 }
 
 const Timer = (props) => {
-  const [timerToggle, setTimerToggle] = useState(true)
-  const { correctWords, startCounting, setStartCounting } = props
+  const { correctWords, startCounting } = props
   const [timeElapsed, setTimeElapsed] = useState(0)
 
   useEffect(() => {
     let id
-    if (startCounting && timerToggle) {
+    if (startCounting) {
       id = setInterval(() => {
         setTimeElapsed((oldTime) => oldTime + 1)
       }, 1000)
@@ -46,9 +44,9 @@ const Timer = (props) => {
   const minutes = timeElapsed / 60
 
   return (
-    <div>
+    <div className="stats">
       <p>
-        <b>Time:</b> {timeElapsed}s
+        <b>Time Elapsed:</b> {timeElapsed}s
       </p>
       <p>
         <b>Speed:</b> {(correctWords / minutes || 0).toFixed(0)} WPM
@@ -72,7 +70,7 @@ function App() {
     if (value.endsWith(" ")) {
       if (activeWordIndex === cloud.current.length - 1 || 0) {
         setStartCounting(false)
-        setUserInput("Time!!!")
+        setUserInput("Finished")
         return
       }
 
@@ -112,10 +110,13 @@ function App() {
       <input
         type="text"
         value={userInput}
+        placeholder="Type Here"
         onChange={(e) => processInput(e.target.value)}
       ></input>
-
-      <button onClick={() => window.location.reload(false)}>Restart</button>
+      <br></br>
+      <button className="restart" onClick={() => window.location.reload(false)}>
+        Restart
+      </button>
     </div>
   )
 }
