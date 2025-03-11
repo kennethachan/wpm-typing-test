@@ -34,63 +34,31 @@ font-size: 30px;
 .active {
   font-weight: bold;
   color: white;
-  background-color: #32abe8;
+  background-color: #23b4fd;
 }
 
 .stats {
   display: flex;
   justify-content: space-between;
-  width: 280px;
+  width: 500px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .buttons {
-  display: flex;
-  justify-content: space-between;
-  width: 220px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.restart {
   font-size: 15px;
   width: 100px;
-  background-color: #08BF32;
-  color: white;
+  background-color: #28314b;
+  color: #bbd6ff;
   border: none;
   font-weight: bold;
-  padding: 10px;
-  border-radius: 20px;
   cursor: pointer;
-  margin-top: 30px;
   font-family: 'Source Code Pro', monospace;
 }
 
-.restart:hover {
-  background:white;
-  color: #08BF32;
-  border: 1px solid #08BF32;
+.buttons:hover {
+  color: #23b4fd;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
 }
-
-.randomize {
-  font-size: 15px;
-  width: 100px;
-  background-color: #D76B9D;
-  color: white;
-  border: none;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-top: 30px;
-  font-family: 'Source Code Pro', monospace;
-}
-
-.randomize:hover {
-  background:white;
-  color: #D76B9D;
-  border: 1px solid #D76B9D;
-}
-
 

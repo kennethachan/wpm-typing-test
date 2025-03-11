@@ -165,6 +165,7 @@ const Letter = (props) => {
 const Timer = (props) => {
   const { correctWords, startCounting } = props;
   const [timeRemaining, setTimeRemaining] = useState(60);
+  let navigate = useNavigate();
 
   useEffect(() => {
     let id;
@@ -190,6 +191,15 @@ const Timer = (props) => {
       <p>
         <b>Speed:</b> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)} WPM
       </p>
+      <button
+          className="buttons"
+          onClick={() => window.location.reload(false)}
+        >
+          Restart
+        </button>
+        <button className="buttons" onClick={() => navigate("/randomize")}>
+          Randomize
+        </button>
     </div>
   );
 };
@@ -200,8 +210,6 @@ function StandardText() {
   const [correctLetters, setCorrectLetters] = useState([]); // Store correctness of each letter typed
   const cloud = useRef(getCloud()); // The text that the user has to type
   const [startCounting, setStartCounting] = useState(false); // Timer flag
-
-  let navigate = useNavigate();
 
   // Process user input and check for correctness
   const processInput = (value) => {
@@ -283,17 +291,7 @@ function StandardText() {
         onChange={(e) => processInput(e.target.value)}
       ></input>
       <br></br>
-      <div className="buttons">
-        <button
-          className="restart"
-          onClick={() => window.location.reload(false)}
-        >
-          Restart
-        </button>
-        <button className="randomize" onClick={() => navigate("/randomize")}>
-          Randomize
-        </button>
-      </div>
+     
     </div>
   );
 }
