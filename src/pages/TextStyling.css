@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
 html {
-  background-color: #bbd6ff;
-  color: rgb(12, 43, 94);
+  background-color: #28314b;
+  color:  #bbd6ff;
 }
 
 body {
@@ -10,11 +10,15 @@ body {
 }
 
 .App {
-  width: 500px;
+  width: 800px;
   text-align: center;
   font-family: 'Source Code Pro', monospace;
   margin-left: auto;
   margin-right: auto;
+}
+
+.words {
+font-size: 30px;
 }
 
 .correct {
@@ -88,3 +92,5 @@ body {
   color: #D76B9D;
   border: 1px solid #D76B9D;
 }
+
+
