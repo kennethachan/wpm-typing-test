@@ -40,7 +40,7 @@ font-size: 30px;
 .stats {
   display: flex;
   justify-content: space-between;
-  width: 500px;
+  width: 400px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -58,7 +58,7 @@ font-size: 30px;
 }
 
 .buttons:hover {
-  color: #23b4fd;
+  /* color: #23b4fd; */
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
   transform: scale(1.1);
 }
