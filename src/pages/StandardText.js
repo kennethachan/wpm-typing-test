@@ -306,7 +306,7 @@ function StandardText() {
 
   return (
     <div className="App">
-      <h1>WPM Typing Test</h1>
+      <h1 className="title">The Typing Dojo</h1>
       <Timer startCounting={startCounting} correctWords={correctLetters.filter((word) => word?.every(Boolean)).length} />
       <h3 className="words">
         {text.map((word, wordIndex) => (

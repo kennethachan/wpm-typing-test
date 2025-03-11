@@ -17,6 +17,10 @@ body {
   margin-right: auto;
 }
 
+.title {
+  font-size: 40px;
+}
+
 .words {
 font-size: 30px;
 }
