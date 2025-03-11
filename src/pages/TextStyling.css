@@ -23,18 +23,18 @@ font-size: 30px;
 
 .correct {
   font-weight: bold;
-  color: #02A527 ;
+  color: #56d674 ;
 }
 
 .incorrect {
   font-weight: bold;
-  color: #FF0000;
+  color: #e18d8d;
 }
 
 .active {
   font-weight: bold;
   color: white;
-  background-color: #D76B9D;
+  background-color: #32abe8;
 }
 
 .stats {
