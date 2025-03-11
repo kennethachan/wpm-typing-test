@@ -54,6 +54,7 @@ font-size: 30px;
   font-weight: bold;
   cursor: pointer;
   font-family: 'Source Code Pro', monospace;
+  margin-bottom: 22px;
 }
 
 .buttons:hover {

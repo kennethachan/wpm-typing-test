@@ -186,10 +186,10 @@ const Timer = (props) => {
   return (
     <div className="stats">
       <p>
-        <b>Time Remaining:</b> {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+        <b>Time Remaining</b><br></br> {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
       </p>
       <p>
-        <b>Speed:</b> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)} WPM
+        <b>WPM</b><br></br> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)}
       </p>
       <button
           className="buttons"
