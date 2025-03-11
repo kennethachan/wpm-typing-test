@@ -1,5 +1,5 @@
 import "./TextStyling.css"
-import { useState, react, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 const getCloud = () =>
@@ -8,7 +8,7 @@ const getCloud = () =>
     .sort(() => (Math.random() > 0.5 ? 1 : -1))
 
 const Word = (props) => {
-  const { text, active, correct, incorrect } = props
+  const { text, active, correct } = props
 
   if (correct === true) {
     return <span className="correct">{text} </span>
