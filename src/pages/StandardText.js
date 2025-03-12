@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const openaiApiKey = process.env.REACT_APP_API_KEY; // Store API key securely
-console.log(openaiApiKey)
 
 const fetchHistoricalQuote = async () => {
   try {
@@ -16,12 +15,12 @@ const fetchHistoricalQuote = async () => {
           {
             role: "system",
             content: `You generate text for a 60-second words-per-minute typing test. 
-                      The text should be engaging, simple, and suitable for typing practice.
+                      The text should be engaging,  very simple, and suitable for typing practice.
                       Avoid numbers, special characters, or difficult vocabulary.`
           },
           {
             role: "user",
-            content: `Generate a passage that is approximately 100-150 words long, made up of short, simple sentences. 
+            content: `Generate a passage that is approximately 100-150 words long, made up of short, super simple sentences. 
                       The passage should resemble a natural paragraph, focusing on a general topic like nature, daily life, or a short fictional story.
                       Example:
                       "The sun was shining, and the birds sang in the trees. A cool breeze moved through the open fields. 
@@ -40,7 +39,6 @@ const fetchHistoricalQuote = async () => {
       }
     );
 
-    // Extract quote from API response
     const quote = response.data.choices[0]?.message?.content || "History is written by the victors.";
     return quote.split(" ");
   } catch (error) {
@@ -56,46 +54,16 @@ const Letter = ({ letter, active, correct }) => {
   return <span>{letter}</span>;
 };
 
-const Timer = ({ correctWords, startCounting }) => {
-  const [timeRemaining, setTimeRemaining] = useState(60);
-  let navigate = useNavigate();
-
-  useEffect(() => {
-    let id;
-    if (startCounting && timeRemaining > 0) {
-      id = setInterval(() => {
-        setTimeRemaining((oldTime) => oldTime - 1);
-      }, 1000);
-    }
-    return () => clearInterval(id);
-  }, [startCounting, timeRemaining]);
-
-  const minutes = Math.floor(timeRemaining / 60);
-  const seconds = timeRemaining ;
-
-  return (
-    <div className="stats">
-      <p>
-            <b>Time Remaining</b><br /> {seconds}s
-      </p>
-      <p>
-        <b>WPM</b><br /> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)}
-      </p>
-      <button className="buttons" onClick={() => window.location.reload(false)}>
-        Restart
-      </button>
-    </div>
-  );
-};
-
 function StandardText() {
   const [userInput, setUserInput] = useState("");
   const [activeWordIndex, setActiveWordIndex] = useState(0);
   const [correctLetters, setCorrectLetters] = useState([]);
   const [text, setText] = useState([]);
   const [startCounting, setStartCounting] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(60); // Timer state moved here
   const inputRef = useRef(null);
   const startedTyping = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -118,6 +86,28 @@ function StandardText() {
     };
     loadQuote();
   }, []);
+
+  useEffect(() => {
+    let id;
+    if (startCounting && timeRemaining > 0) {
+        id = setInterval(() => {
+            setTimeRemaining((oldTime) => oldTime - 1);
+        }, 1000);
+    } else if (timeRemaining === 0) {
+        console.log("Timer reached 0, navigating..."); // Debugging
+        const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
+        const wpm = (correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0);
+        
+        setTimeout(() => { // Delay navigation slightly to ensure render
+            navigate("/results", { state: { wpm } }); 
+        }, 100);
+    }
+
+    return () => clearInterval(id);
+}, [startCounting, timeRemaining, correctLetters, navigate]);
+
+
+
 
   const processInput = (value) => {
     if (!startCounting) {
@@ -148,8 +138,8 @@ function StandardText() {
 
   return (
     <div className="App">
-      <h1 className="title">The Typing Dojo</h1>
-      <Timer startCounting={startCounting} correctWords={correctLetters.filter((word) => word?.every(Boolean)).length} />
+      <h1 className="title" onClick={() => navigate("/")} >The Typing Dojo</h1>
+      <Timer startCounting={startCounting} correctWords={correctLetters.filter((word) => word?.every(Boolean)).length} timeRemaining={timeRemaining} />
       <h3 className="words">
         {text.map((word, wordIndex) => (
           <span key={wordIndex} className="word">
@@ -167,12 +157,33 @@ function StandardText() {
         value={userInput}
         placeholder="Start typing..."
         onChange={(e) => processInput(e.target.value)}
+        style={{ display: timeRemaining === 0 ? "none" : "block" }} 
+        disabled={timeRemaining === 0} // Prevents typing when timer reaches 0
       />
     </div>
   );
 }
 
-
+const Timer = ({ correctWords, startCounting, timeRemaining }) => {
+  return (
+    <div className="stats">
+      <p>
+        <b>Time Remaining</b><br /> {timeRemaining}s
+      </p>
+      <p>
+        <b>WPM</b><br /> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)}
+      </p>
+      <button className="buttons" onClick={() => window.location.reload(false)}>
+        Restart
+      </button>
+    </div>
+  );
+};
 
 export default StandardText;
+
+
+
+
+
 
