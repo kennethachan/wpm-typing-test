@@ -247,7 +247,11 @@ const fetchHistoricalQuote = async () => {
           },
           {
             role: "user",
-            content: `Generate a passage that is approximately 100-150 words long, super simple long sentences. Do not make any references about typing or typing tests.`
+            content: `Generate a passage that is approximately 100-150 words long, super simple long sentences. Do not make any references about typing or typing tests.
+            Example:
+                    "The sun was shining, and the birds sang in the trees. A cool breeze moved through the open fields. 
+                    A young girl ran along the trail, her dog chasing close behind. The morning was peaceful and full of promise."
+                    Avoid excessive repetition or uncommon words. Avoid too many commas.`
           }
         ],
         max_tokens: 300,
