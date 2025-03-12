@@ -28,7 +28,7 @@ const fetchHistoricalQuote = async () => {
           }
         ],
         max_tokens: 300,
-        temperature: 0.8,
+        temperature: 1.0,
       },
       {
         headers: {
@@ -38,11 +38,11 @@ const fetchHistoricalQuote = async () => {
       }
     );
 
-    const quote = response.data.choices[0]?.message?.content || "History is written by the victors.";
+    const quote = response.data.choices[0]?.message?.content || "Something went wrong.";
     return quote.split(" ");
   } catch (error) {
-    console.error("Error fetching historical quote:", error);
-    return ["History", "is", "written", "by", "the", "victors."];
+    console.error("Error fetching text:", error);
+    return ["Something", "went", "wrong."];
   }
 };
 
@@ -223,7 +223,7 @@ function StandardText() {
   );
 }
 
-// ✅ Timer Component Now Included
+// Timer Component Now Included
 const Timer = ({ correctWords, timeRemaining }) => {
   return (
     <div className="stats">
@@ -241,10 +241,6 @@ const Timer = ({ correctWords, timeRemaining }) => {
 };
 
 export default StandardText;
-
-
-
-
 
 
 
