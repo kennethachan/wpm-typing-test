@@ -1,3 +1,4 @@
+
 // import "./TextStyling.css";
 // import { useState, useRef, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -60,7 +61,7 @@
 //   const [correctLetters, setCorrectLetters] = useState([]);
 //   const [text, setText] = useState([]);
 //   const [startCounting, setStartCounting] = useState(false);
-//   const [timeRemaining, setTimeRemaining] = useState(60); // Timer state moved here
+//   const [timeRemaining, setTimeRemaining] = useState(60);
 //   const inputRef = useRef(null);
 //   const startedTyping = useRef(false);
 //   const navigate = useNavigate();
@@ -90,22 +91,21 @@
 //   useEffect(() => {
 //     let id;
 //     if (startCounting && timeRemaining > 0) {
-//         id = setInterval(() => {
-//             setTimeRemaining((oldTime) => oldTime - 1);
-//         }, 1000);
+//       id = setInterval(() => {
+//         setTimeRemaining((oldTime) => oldTime - 1);
+//       }, 1000);
 //     } else if (timeRemaining === 0) {
-//         console.log("Timer reached 0, navigating..."); // Debugging
-//         const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
-//         const wpm = (correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0);
-        
-//         setTimeout(() => { // Delay navigation slightly to ensure render
-//             navigate("/results", { state: { wpm } }); 
-//         }, 100);
+//       console.log("Timer reached 0, navigating...");
+//       const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
+//       const wpm = ((correctWords / ((60 - timeRemaining) / 60)) || 0).toFixed(0);
+      
+//       setTimeout(() => { 
+//         navigate("/results", { state: { wpm } }); 
+//       }, 100);
 //     }
 
 //     return () => clearInterval(id);
-// }, [startCounting, timeRemaining, correctLetters, navigate]);
-
+//   }, [startCounting, timeRemaining, correctLetters, navigate]);
 
 //   const processInput = (value) => {
 //     if (!startCounting) {
@@ -115,7 +115,16 @@
 //     if (value.endsWith(" ")) {
 //       if (activeWordIndex === text.length - 1) {
 //         setStartCounting(false);
-//         setUserInput("Finished");
+
+//         // Calculate WPM when user finishes typing
+//         const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
+//         const timeUsed = 60 - timeRemaining;
+//         const wpm = timeUsed > 0 ? ((correctWords / (timeUsed / 60)) || 0).toFixed(0) : 0;
+
+//         setTimeout(() => {
+//           navigate("/results", { state: { wpm } }); // 🚀 Navigate immediately when finished
+//         }, 100);
+
 //         return;
 //       }
 
@@ -136,7 +145,7 @@
 
 //   return (
 //     <div className="App">
-//       <h1 className="title" >The Typing Dojo</h1>
+//       <h1 className="title" onClick={() => navigate("/")}>The Typing Dojo</h1>
 //       <Timer startCounting={startCounting} correctWords={correctLetters.filter((word) => word?.every(Boolean)).length} timeRemaining={timeRemaining} />
 //       <h3 className="words">
 //         {text.map((word, wordIndex) => (
@@ -156,13 +165,13 @@
 //         placeholder="Start typing..."
 //         onChange={(e) => processInput(e.target.value)}
 //         style={{ display: timeRemaining === 0 ? "none" : "block" }} 
-//         disabled={timeRemaining === 0} // Prevents typing when timer reaches 0
+//         disabled={timeRemaining === 0}
 //       />
 //     </div>
 //   );
 // }
 
-// const Timer = ({ correctWords, startCounting, timeRemaining }) => {
+// const Timer = ({ correctWords, timeRemaining }) => {
 //   return (
 //     <div className="stats">
 //       <p>
@@ -171,14 +180,18 @@
 //       <p>
 //         <b>WPM</b><br /> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)}
 //       </p>
-//       <button className="buttons" onClick={() => window.location.reload(false)}>
-//         Restart
-//       </button>
+//      <button className="buttons" onClick={() => window.location.reload(false)}>
+//        Restart
+//    </button>
 //     </div>
 //   );
 // };
 
 // export default StandardText;
+
+
+
+
 
 
 
@@ -284,9 +297,9 @@ function StandardText() {
       console.log("Timer reached 0, navigating...");
       const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
       const wpm = ((correctWords / ((60 - timeRemaining) / 60)) || 0).toFixed(0);
-      
-      setTimeout(() => { 
-        navigate("/results", { state: { wpm } }); 
+
+      setTimeout(() => {
+        navigate("/results", { state: { wpm } });
       }, 100);
     }
 
@@ -298,17 +311,32 @@ function StandardText() {
       setStartCounting(true);
     }
 
+    const currentWord = text[activeWordIndex] || "";
+    const userTypedLength = value.length; // Track how much the user has typed
+
+    // Update letter correctness in real-time (only up to the typed length)
+    setCorrectLetters((prevCorrectLetters) => {
+      const newCorrectLetters = [...prevCorrectLetters];
+      const letterCorrectness = currentWord.split("").map((letter, index) => {
+        if (index >= userTypedLength) return null; // Avoid marking letters not yet typed
+        return letter === value[index];
+      });
+
+      newCorrectLetters[activeWordIndex] = letterCorrectness;
+      return newCorrectLetters;
+    });
+
+    // Move to next word on space press
     if (value.endsWith(" ")) {
       if (activeWordIndex === text.length - 1) {
         setStartCounting(false);
 
-        // Calculate WPM when user finishes typing
         const correctWords = correctLetters.filter((word) => word?.every(Boolean)).length;
         const timeUsed = 60 - timeRemaining;
         const wpm = timeUsed > 0 ? ((correctWords / (timeUsed / 60)) || 0).toFixed(0) : 0;
 
         setTimeout(() => {
-          navigate("/results", { state: { wpm } }); // 🚀 Navigate immediately when finished
+          navigate("/results", { state: { wpm } });
         }, 100);
 
         return;
@@ -316,14 +344,6 @@ function StandardText() {
 
       setActiveWordIndex((index) => index + 1);
       setUserInput("");
-
-      setCorrectLetters((prevCorrectLetters) => {
-        const newCorrectLetters = [...prevCorrectLetters];
-        const currentWord = text[activeWordIndex];
-        const currentWordCorrectness = currentWord.split("").map((letter, index) => letter === value.trim()[index]);
-        newCorrectLetters[activeWordIndex] = currentWordCorrectness;
-        return newCorrectLetters;
-      });
     } else {
       setUserInput(value);
     }
@@ -338,7 +358,9 @@ function StandardText() {
           <span key={wordIndex} className="word">
             {word.split("").map((letter, letterIndex) => {
               const isActive = wordIndex === activeWordIndex && letterIndex === userInput.length;
-              return <Letter key={letterIndex} letter={letter} active={isActive} correct={correctLetters[wordIndex]?.[letterIndex]} />;
+              const isCorrect = correctLetters[wordIndex]?.[letterIndex];
+
+              return <Letter key={letterIndex} letter={letter} active={isActive} correct={isCorrect} />;
             })}{" "}
           </span>
         ))}
@@ -366,14 +388,19 @@ const Timer = ({ correctWords, timeRemaining }) => {
       <p>
         <b>WPM</b><br /> {(correctWords / ((60 - timeRemaining) / 60) || 0).toFixed(0)}
       </p>
-     <button className="buttons" onClick={() => window.location.reload(false)}>
-       Restart
-   </button>
+      <button className="buttons" onClick={() => window.location.reload(false)}>
+        Restart
+      </button>
     </div>
   );
 };
 
 export default StandardText;
+
+
+
+
+
 
 
 
