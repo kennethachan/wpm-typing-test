@@ -66,10 +66,11 @@ function StandardText() {
   const timerRef = useRef(null);
   const inputRef = useRef(null);
   const startedTyping = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleKeyPress = () => {
+    const handleKeyPress = (event) => {
       if (!startedTyping.current) {
         startedTyping.current = true;
         setStartCounting(true);
@@ -77,16 +78,38 @@ function StandardText() {
           inputRef.current.focus();
         }
       }
-    };
 
+      // Prevent Tab key from disrupting input
+      if (event.key === "Tab") {
+        event.preventDefault();
+      }
+    };
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
+  // Refocus input field if clicked outside interactive elements
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (
+        inputRef.current &&
+        event.target !== inputRef.current &&
+        !event.target.closest(".buttons")
+      ) {
+        inputRef.current.focus();
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
   useEffect(() => {
     const loadQuote = async () => {
+      setIsLoading(true); // ✅ Start loading
       const generatedText = await fetchHistoricalQuote();
       setText(generatedText);
+      setIsLoading(false); // ✅ Stop loading
     };
     loadQuote();
   }, []);
@@ -178,50 +201,68 @@ function StandardText() {
     <div className="App">
       <h1 className="title">The Typing Dojo</h1>
       <Timer correctWords={correctLetters.filter((word) => word?.every(Boolean)).length} timeRemaining={timeRemaining} />
-      <h3 className="words">
-  {text.map((word, wordIndex) => (
-    <span key={wordIndex} className="word">
-      {word.split("").map((letter, letterIndex) => {
-        // Fix: Ensure the caret is visible on the last letter and space
-        const isActive =
-          wordIndex === activeWordIndex &&
-          (letterIndex === userInput.length || letterIndex === userInput.length - 1);
-
-        const isCorrect = correctLetters[wordIndex]?.[letterIndex];
-
-        return <Letter key={letterIndex} letter={letter} active={isActive} correct={isCorrect} />;
-      })}
-      
-      {/* Ensure the space after the word is highlighted when moving to the next word */}
-      <Letter
-        key={`${wordIndex}-space`}
-        letter=" "
-        active={wordIndex === activeWordIndex && userInput.length === word.length}
-      />
-    </span>
-  ))}
-</h3>
-
-      <input
-        className="input"
-        ref={inputRef}
-        type="text"
-        value={userInput}
-        placeholder="Start typing..."
-        onChange={(e) => processInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Backspace" && userInput === "" && activeWordIndex > 0) {
-            setActiveWordIndex(activeWordIndex - 1);
-            setUserInput(typedWords[activeWordIndex - 1] || "");
-            e.preventDefault();
-          }
-        }}
-        style={{ display: timeRemaining === 0 ? "none" : "block" }} 
-        disabled={timeRemaining === 0}
-      />
+  
+      {isLoading ? (
+        <div className="loading-container">
+          <p className="loading-text"><b>Loading Text!</b></p>
+          <div className="loading-spinner"></div>
+        </div>
+      ) : (
+        <div>
+          <h3 className="words">
+            {text.map((word, wordIndex) => (
+              <span key={wordIndex} className="word">
+                {word.split("").map((letter, letterIndex) => {
+                  // Fix: Ensure the caret is visible on the last letter and space
+                  const isActive =
+                    wordIndex === activeWordIndex &&
+                    (letterIndex === userInput.length || letterIndex === userInput.length - 1);
+  
+                  const isCorrect = correctLetters[wordIndex]?.[letterIndex];
+  
+                  return (
+                    <Letter
+                      key={letterIndex}
+                      letter={letter}
+                      active={isActive}
+                      correct={isCorrect}
+                    />
+                  );
+                })}
+  
+                {/* Ensure the space after the word is highlighted when moving to the next word */}
+                <Letter
+                  key={`${wordIndex}-space`}
+                  letter=" "
+                  active={wordIndex === activeWordIndex && userInput.length === word.length}
+                />
+              </span>
+            ))}
+          </h3>
+  
+          <input
+            className="input"
+            ref={inputRef}
+            type="text"
+            value={userInput}
+            placeholder="Start typing..."
+            onChange={(e) => processInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace" && userInput === "" && activeWordIndex > 0) {
+                setActiveWordIndex(activeWordIndex - 1);
+                setUserInput(typedWords[activeWordIndex - 1] || "");
+                e.preventDefault();
+              }
+            }}
+            style={{ display: timeRemaining === 0 ? "none" : "block" }}
+            disabled={timeRemaining === 0}
+          />
+        </div>
+      )}
     </div>
   );
 }
+  
 
 // Timer Component Now Included
 const Timer = ({ correctWords, timeRemaining }) => {
@@ -241,7 +282,6 @@ const Timer = ({ correctWords, timeRemaining }) => {
 };
 
 export default StandardText;
-
 
 
 
