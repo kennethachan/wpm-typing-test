@@ -248,14 +248,28 @@ function StandardText() {
             placeholder="Start typing..."
             onChange={(e) => processInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Backspace" && userInput === "" && activeWordIndex > 0) {
-                setActiveWordIndex(activeWordIndex - 1);
-                setUserInput(typedWords[activeWordIndex - 1] || "");
-                e.preventDefault();
+              if (e.key === "Backspace") {
+                if (userInput === "" && activeWordIndex > 0) {
+                  // Move to previous word
+                  const previousWordIndex = activeWordIndex - 1;
+                  const previousWord = typedWords[previousWordIndex] || "";
+            
+                  setActiveWordIndex(previousWordIndex);
+            
+                  // ✅ Ensure caret is at the END of the previous word
+                  setUserInput(previousWord + " "); // Add a space to prevent caret loss
+            
+                  e.preventDefault(); // Prevent default backspacing behavior
+                }
               }
+            
+              setTimeout(() => {
+                if (inputRef.current) {
+                  inputRef.current.focus();
+                }
+              }, 0);
             }}
-            style={{ display: timeRemaining === 0 ? "none" : "block" }}
-            disabled={timeRemaining === 0}
+            
           />
         </div>
       )}
